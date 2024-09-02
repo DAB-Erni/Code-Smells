@@ -5,6 +5,9 @@ using System.Text.Json;
 
 public class UserRepository
 {
+    // TO DO: Use a single HttpClient for better performance and to avoid potential issues
+    // private static readonly HttpClient _httpClient = new HttpClient();
+
     private readonly HttpClient _httpClient;
 
     public UserRepository()
@@ -14,21 +17,25 @@ public class UserRepository
 
     public async Task<JsonDocument> GetAllUsersAsync()
     {
-        var response = await _httpClient.GetAsync("https://fake-json-api.mock.beeceptor.com/users");
-        response.EnsureSuccessStatusCode();
+        try
+        {
+            var response = await _httpClient.GetAsync("https://fake-json-api.mock.beeceptor.com/users");
+            response.EnsureSuccessStatusCode();
 
-        var content = await response.Content.ReadAsStringAsync();
-        var users = JsonDocument.Parse(content);
+            var content = await response.Content.ReadAsStringAsync();
+            var users = JsonDocument.Parse(content);
 
-        return users;
+            return users;
+        }
+        catch (HttpRequestException ex)
+        {
+            // TO DO: Handle potential HttpRequestException if the request fails
+            Console.WriteLine($"HTTP request error: {ex.Message}");
+        }
+        catch (JsonException ex)
+        {
+            // TO DO: Handle potential JsonException if the JSON parsing fails
+            Console.WriteLine($"JSON parsing error: {ex.Message}");
+        }
     }
-
-    // public async Task AddUserAsync(dynamic user)
-    // {
-    //     var userJson = JsonSerializer.Serialize(user);
-    //     var content = new StringContent(userJson, System.Text.Encoding.UTF8, "application/json");
-
-    //     var response = await _httpClient.PostAsync("https://fake-json-api.mock.beeceptor.com/users", content);
-    //     response.EnsureSuccessStatusCode();
-    // }
 }
