@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 
 public class UserService
 {
+    // TO DO: Refactor to use dependency injection for better flexibility
     public readonly UserRepository _userRepository;
 
     public UserService()
@@ -15,9 +16,4 @@ public class UserService
     {
         return await _userRepository.GetAllUsersAsync();
     }
-
-    // public async Task AddUserAsync(dynamic user)
-    // {
-    //     await _userRepository.AddUserAsync(user);
-    // }
 }
